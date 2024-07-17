@@ -1,0 +1,19 @@
+# Ignore build directories
+**/build/
+
+# Ignore compiled files
+*.o
+*.so
+*.ko
+*.dll
+*.d
+*.class
+*.war
+*.jar
+*.pyc
+*.rbc
+*.lo
+*.la
+*.gch
+*.pch 
+.cache/
