@@ -4,4 +4,5 @@ project(MultiThreading)
 
 
 add_subdirectory("samples/summation")
+add_subdirectory("samples/racecheck")
 
