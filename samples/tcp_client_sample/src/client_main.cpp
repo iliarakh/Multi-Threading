@@ -7,9 +7,9 @@
 
 int main()
 {
-    auto * sendbuf = "Recieved";
-    char   recvbuf[DEFAULT_BUFLEN];
-    int    recvbuflen = DEFAULT_BUFLEN;
+    std::string sendbuf = "Hello";
+    std::string recv_str;
+    int         recvbuflen = DEFAULT_BUFLEN;
 
     // Opens winsock shared library
     WSADATA wsaData;
@@ -41,9 +41,9 @@ int main()
         WSACleanup();
         return 1;
     }
-    std::cout << "Sending Hello...\n";
+    std::cout << "Sending " << sendbuf << "...\n";
 
-    iResult = send( ConnectSocket, sendbuf, (int)strlen( sendbuf ), MSG_OOB );
+    iResult = send( ConnectSocket, sendbuf.c_str(), sendbuf.length(), MSG_OOB );
     if ( iResult == SOCKET_ERROR ) {
         wprintf( L"send failed with error: %d\n", WSAGetLastError() );
         closesocket( ConnectSocket );
@@ -51,36 +51,17 @@ int main()
         return 1;
     }
 
-    std::cout << sendbuf;
+    char recvbuf[DEFAULT_BUFLEN];
 
-    do {
+    iResult  = recv( ConnectSocket, recvbuf, recvbuflen, 0 );
+    recv_str = recvbuf;
 
-        iResult = recv( ConnectSocket, recvbuf, recvbuflen, 0 );
-        if ( iResult > 0 )
-            printf( "Bytes received: %d\n", iResult );
-        else if ( iResult == 0 )
-            printf( "Connection closed\n" );
-        else
-            printf( "recv failed: %d\n", WSAGetLastError() );
-
-    } while ( iResult > 0 );
-
-    do {
-
-        iResult = recv( ConnectSocket, recvbuf, recvbuflen, 0 );
-        if ( iResult > 0 )
-            printf( "recieved: %d\n", iResult );
-        else if ( iResult == 0 )
-            printf( "Connection closed\n" );
-        else
-            printf( "closing client... %d\n", WSAGetLastError() );
-
-    } while ( iResult > 0 );
-
-    // std::string response;
-    // std::cout << "recieved: " << response << "\n";
-
-    // std::cout << "closing client...\n";
+    if ( iResult > 0 )  // if iResult is positivve it denotes the numhber fo bytes read
+        printf( "Read %s\n", recv_str.c_str() );
+    else if ( iResult == 0 )  // if it is 0 the connection is closed
+        printf( "Connection closed\n" );
+    else  // otherwise iResult is an error
+        printf( "closing client... %d\n", WSAGetLastError() );
 
     closesocket( ConnectSocket );
     // Close winsock shared library
