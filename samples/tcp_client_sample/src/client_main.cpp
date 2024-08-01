@@ -43,7 +43,7 @@ int main()
     }
     std::cout << "Sending " << sendbuf << "...\n";
 
-    iResult = send( ConnectSocket, sendbuf.c_str(), sendbuf.length(), MSG_OOB );
+    iResult = send( ConnectSocket, sendbuf.c_str(), (int)sendbuf.length() + 1, MSG_OOB );
     if ( iResult == SOCKET_ERROR ) {
         wprintf( L"send failed with error: %d\n", WSAGetLastError() );
         closesocket( ConnectSocket );
