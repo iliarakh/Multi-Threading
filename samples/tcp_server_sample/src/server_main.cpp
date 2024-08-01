@@ -1,6 +1,7 @@
 #include <iostream>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string>
 #include <windows.h>
 
 #define DEFAULT_PORT   27015
@@ -45,7 +46,7 @@ int main()
         WSACleanup();
         return 1;
     }
-    while (true) {
+    while ( true ) {
 
         ClientSocket = accept( ListenSocket, nullptr, nullptr );
         if ( ClientSocket == INVALID_SOCKET ) {
@@ -58,8 +59,8 @@ int main()
         if ( recv( ClientSocket, recvbuf, recvbuflen, 0 ) > 0 ) {
             std::cout << "Received: " << recvbuf << std::endl;
 
-            const char * sendbuf = "World";
-            if ( send( ClientSocket, sendbuf, (int)strlen( sendbuf ), 0 ) == SOCKET_ERROR ) {
+            std::string sendbuf = "World";
+            if ( send( ClientSocket, sendbuf.c_str(), sendbuf.length() + 1, 0 ) == SOCKET_ERROR ) {
                 std::cerr << "Send failed.\n";
             }
         }
