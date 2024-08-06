@@ -2,7 +2,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string>
-#include <windows.h>
+#include <windows.h> // Include the correct header for WinSock functions
 
 #define DEFAULT_PORT   27015
 #define DEFAULT_BUFLEN 512
@@ -12,19 +12,17 @@ int main()
     SOCKET             ListenSocket = INVALID_SOCKET;
     SOCKET             ClientSocket = INVALID_SOCKET;
     struct sockaddr_in serverAddr;
-    char               recvbuf[DEFAULT_BUFLEN];
-    int                recvbuflen = DEFAULT_BUFLEN;
 
     WSADATA wsaData;
     int     iResult = WSAStartup( MAKEWORD( 2, 2 ), &wsaData );
     if ( iResult != NO_ERROR ) {
-        wprintf( L"WSAStartup function failed with error: %d\n", iResult );
+        std::cerr << "WSAStartup function failed with error: " << iResult << std::endl;
         return 1;
     }
 
     ListenSocket = socket( AF_INET, SOCK_STREAM, IPPROTO_TCP );
     if ( ListenSocket == INVALID_SOCKET ) {
-        std::cout << "Socket creation failed.\n";
+        std::cerr << "Socket creation failed.\n";
         WSACleanup();
         return 1;
     }
@@ -46,8 +44,8 @@ int main()
         WSACleanup();
         return 1;
     }
+    
     while ( true ) {
-
         ClientSocket = accept( ListenSocket, nullptr, nullptr );
         if ( ClientSocket == INVALID_SOCKET ) {
             std::cerr << "Accept failed.\n";
@@ -56,20 +54,28 @@ int main()
             return 1;
         }
 
-        if ( recv( ClientSocket, recvbuf, recvbuflen, 0 ) > 0 ) {
-            std::cout << "Received: " << recvbuf << std::endl;
+        // Step 6: Receive data into a std::string
+        const size_t bufferSize = DEFAULT_BUFLEN; // Use size_t for buffer size
+        std::string receivedData(bufferSize, '\0'); // Initialize string with buffer size
+
+        int recvResult = recv(ClientSocket, &receivedData[0], static_cast<int>(bufferSize), 0);
+        if (recvResult > 0) {
+            receivedData.resize(recvResult); // Resize to actual length of received data
+            std::cout << "Received message: " << receivedData << std::endl;
 
             std::string sendbuf = "World";
             if ( send( ClientSocket, sendbuf.c_str(), sendbuf.length() + 1, 0 ) == SOCKET_ERROR ) {
                 std::cerr << "Send failed.\n";
             }
+        } else if (recvResult == 0) {
+            std::cout << "Connection closed gracefully" << std::endl;
+        } else {
+            std::cerr << "Recv failed: " << WSAGetLastError() << std::endl;
         }
-        else {
-            std::cerr << "Receive failed.\n";
-        }
+
+        closesocket(ClientSocket); // Close client socket after handling
     }
 
-    closesocket( ClientSocket );
     closesocket( ListenSocket );
     WSACleanup();
 
