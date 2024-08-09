@@ -1,13 +1,12 @@
-project(tcp_client)
+project(tcp_server)
 
 add_library(${PROJECT_NAME} 
-	"include/client.hpp"
-	"src/client.cpp"
-)
-
-target_link_libraries( ${PROJECT_NAME}
-	ws2_32
+	"include/server.hpp"
+	"src/server.cpp"
 )
 
 target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
 
+target_link_libraries( ${PROJECT_NAME}
+	ws2_32
+)

@@ -1,4 +1,4 @@
-project(tcp_client)
+project(tcp_client_main)
 
 add_library(${PROJECT_NAME} 
 	"include/client.hpp"
@@ -6,8 +6,10 @@ add_library(${PROJECT_NAME}
 )
 
 target_link_libraries( ${PROJECT_NAME}
-	ws2_32
+	modules/tcp_client
 )
 
-target_include_directories(${PROJECT_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/include)
+add_executable( ${PROJECT_NAME} 
+	src/client_class_main.cpp
+)
 
