@@ -3,7 +3,7 @@
 
 int main() {
     
-    NetworkServer server;
+    MyServer::NetworkServer server;
 
     // start server
     if (!server.startServer()) {

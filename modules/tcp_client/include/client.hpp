@@ -1,30 +1,31 @@
 #ifndef NETWORKCLIENT_HPP
 #define NETWORKCLIENT_HPP
 
-#include <windows.h>
 #include <string>
+#include <windows.h>
 
 namespace MyNetwork {
 
-class NetworkClient {
+    constexpr int DEFAULT_BUFLEN = 512;
 
-public:
-    NetworkClient( const std::string & serverAddress, uint16_t port );
-    ~NetworkClient();
+    class NetworkClient {
 
-    bool        openConnection();
-    bool        sendData( std::string & data );
-    std::string recvData( int bufferSize );
+    public:
+        NetworkClient( const std::string & serverAddress, uint16_t port );
+        ~NetworkClient();
 
-private:
-    std::string serverAddress;
-    uint16_t    port;
-    SOCKET      connectSocket;
-    WSADATA     wsaData;
+        bool        openConnection();
+        bool        sendData( std::string & data );
+        std::string recvData( int bufferSize );
 
-    void closeConnection();
-};
+        std::string serverAddress;
+        uint16_t    port;
+        SOCKET      connectSocket;
+        WSADATA     wsaData;
 
-} 
+        void closeConnection();
+    };
+
+}  // namespace MyNetwork
 
 #endif
